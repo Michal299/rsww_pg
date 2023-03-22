@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "spring.rabbitmq.ping.queue",
+      "type": "java.lang.String",
+      "description": "Sample queue for testing connection between services - pinging."
+    }
+  ] }
