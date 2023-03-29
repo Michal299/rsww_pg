@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
 
-function App() {
+import CollapsibleNavbar from './components/Navbar';
+import Footer from './components/Footer';
+
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Logout from './pages/Logout';
+import TripsList from './pages/TripsList';
+import TripDetails from './pages/TripDetails';
+
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <CollapsibleNavbar />
+      <Container fluid="xl">
+      <Routes>
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/logout" element={<Logout />} />
+        <Route exact path="/trips" element={<TripsList />} />
+        <Route exact path="/trips/:id" element={<TripDetails />} />
+        <Route exact path="/" element={<Home />} />
+      </Routes>
+      </Container>
+      <Footer />
+    </Router>
   );
 }
-
-export default App;
