@@ -8,17 +8,21 @@ import org.springframework.context.annotation.Bean;
 
 public class RabbitMQConfig {
 
-    @Value("${spring.rabbitmq.ping.queue}")
-    private String queue;
+    private final String queue;
+    private final String username;
+    private final String password;
+    private final String host;
 
-    @Value("${spring.rabbitmq.username}")
-    private String username;
+    public RabbitMQConfig(@Value("${spring.rabbitmq.ping.queue}") String queue,
+                          @Value("${spring.rabbitmq.username}") String username,
+                          @Value("${spring.rabbitmq.password}") String password,
+                          @Value("${spring.rabbitmq.host}") String host) {
 
-    @Value("${spring.rabbitmq.password}")
-    private String password;
-
-    @Value("${spring.rabbitmq.host}")
-    private String host;
+        this.queue = queue;
+        this.username = username;
+        this.password = password;
+        this.host = host;
+    }
 
     @Bean
     Queue queue() {

@@ -1,8 +1,11 @@
 package pl.edu.pg.accommodation.ping;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
