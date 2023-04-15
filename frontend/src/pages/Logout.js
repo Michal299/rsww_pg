@@ -1,6 +1,9 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import Login from "./Login";
+import { Button } from "react-bootstrap";
 
 
 export default class Logout extends React.Component {
@@ -21,6 +24,13 @@ export default class Logout extends React.Component {
                     <div className="border-top"></div>
                     <p>See you next time ^^</p>
                 </div>
+                <Link to={'/login'}>
+                    <Button variant="success"
+                        className="w-100"
+                    >
+                        Go to login page
+                    </Button>
+                </Link>
             </div>
             </div>
             
