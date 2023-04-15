@@ -4,27 +4,16 @@ from django.http.response import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-
-@csrf_exempt
-def user_login(request: HttpRequest):
-    params = request.POST
-    username = params.get('username', None)
-    password = params.get('password', None)
-    print(username, password)
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        response = {
-            "user_id": str(user.id),
-            "userFirstname": str(user.firstname),
-            "userLastname": str(user.lastname)
-        }
-        return JsonResponse(response, status=202)
-    else:
-        return JsonResponse({'detail': 'Invalid login. Please try again.'}, status=401)
+from api.models import CustomUser
+from api.serializers import CustomUserSerializer
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -42,3 +31,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+
+class CustomUsersView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = request.user
+
+        users = CustomUser.objects.all()
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
