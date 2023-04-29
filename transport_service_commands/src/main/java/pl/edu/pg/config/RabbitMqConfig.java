@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
 
-    @Value("${spring.rabbitmq.queue}")
-    private String queue;
+    @Value("${spring.rabbitmq.queue.createFlightQueue}")
+    private String createFlightQueue;
 
     @Value("${spring.rabbitmq.username}")
     private String username;
@@ -28,8 +28,8 @@ public class RabbitMqConfig {
     private String port;
 
     @Bean
-    public Queue queue() {
-        return new Queue(queue, true);
+    public Queue createFlightQueue() {
+        return new Queue(createFlightQueue, true);
     }
 
     @Bean

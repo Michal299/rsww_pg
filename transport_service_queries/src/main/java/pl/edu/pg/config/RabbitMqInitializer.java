@@ -26,7 +26,7 @@ public class RabbitMqInitializer {
     }
 
     @PostConstruct
-    private synchronized void createQueue() {
+    private synchronized void createQueues() {
         String queueName = amqpAdmin.declareQueue(getFlightsQueue);
         logger.info("Queue {} is created.", queueName);
         queueName = amqpAdmin.declareQueue(getFlightDetailsQueue);

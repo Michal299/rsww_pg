@@ -12,19 +12,19 @@ import org.springframework.stereotype.Component;
 public class RabbitMqInitializer {
     private final static Logger logger = LoggerFactory.getLogger(RabbitMqInitializer.class);
 
-    private final Queue queue;
+    private final Queue createFlightQueue;
 
     private final AmqpAdmin amqpAdmin;
 
     @Autowired
-    public RabbitMqInitializer(Queue queue, AmqpAdmin amqpAdmin) {
-        this.queue = queue;
+    public RabbitMqInitializer(Queue createFlightQueue, AmqpAdmin amqpAdmin) {
+        this.createFlightQueue = createFlightQueue;
         this.amqpAdmin = amqpAdmin;
     }
 
     @PostConstruct
-    private synchronized void createQueue() {
-        String queueName = amqpAdmin.declareQueue(queue);
+    private synchronized void createQueues() {
+        String queueName = amqpAdmin.declareQueue(createFlightQueue);
         logger.info("Queue {} is created.", queueName);
     }
 }
