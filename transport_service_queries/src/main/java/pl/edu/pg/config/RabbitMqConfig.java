@@ -12,8 +12,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
 
-    @Value("${spring.rabbitmq.queue}")
-    private String queue;
+    @Value("${spring.rabbitmq.queue.getFlightsQueue}")
+    private String getFlightsQueue;
+
+    @Value("${spring.rabbitmq.queue.getFlightDetailsQueue}")
+    private String getFlightDetailsQueue;
 
     @Value("${spring.rabbitmq.username}")
     private String username;
@@ -28,8 +31,13 @@ public class RabbitMqConfig {
     private String port;
 
     @Bean
-    public Queue queue() {
-        return new Queue(queue, true);
+    public Queue getFlightsQueue() {
+        return new Queue(getFlightsQueue, true);
+    }
+
+    @Bean
+    public Queue getFlightDetailsQueue() {
+        return new Queue(getFlightDetailsQueue, true);
     }
 
     @Bean

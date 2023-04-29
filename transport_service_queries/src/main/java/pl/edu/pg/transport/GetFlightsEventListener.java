@@ -6,23 +6,20 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
-public class TransportEventListener {
-    private final static Logger logger = LoggerFactory.getLogger(TransportEventListener.class);
+public class GetFlightsEventListener {
+    private final static Logger logger = LoggerFactory.getLogger(GetFlightsEventListener.class);
 
     private final TransportRepository repository;
 
     @Autowired
-    public TransportEventListener(TransportRepository repository) {
+    public GetFlightsEventListener(TransportRepository repository) {
         this.repository = repository;
     }
 
-    @RabbitListener(queues = "${spring.rabbitmq.queue}")
+    @RabbitListener(queues = "${spring.rabbitmq.queue.getFlightsQueue}")
     public void receiveMessage(String message) {
         logger.info("I'm here!!! Your message: {}", message);
-        repository.save(new Transport(LocalDateTime.now(), LocalDateTime.now(), message));
-        logger.info("Pings so far: {}", repository.findAll());
+        logger.info("Flights so far: {}", repository.findAll());
     }
 }
