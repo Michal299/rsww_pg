@@ -1,6 +1,7 @@
 package pl.edu.pg.transport;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "transports")
 @NoArgsConstructor
+@Getter
 public class Transport {
 
     @Id
