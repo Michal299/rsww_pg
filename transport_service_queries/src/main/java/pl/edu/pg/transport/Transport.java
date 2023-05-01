@@ -1,46 +1,56 @@
 package pl.edu.pg.transport;
 
-import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transports")
-@NoArgsConstructor
+@Getter
 public class Transport {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "departure_date")
     private LocalDateTime departureDate;
 
+    @Column(name = "departure_country")
+    private String departureCountry;
+
+    @Column(name = "departure_city")
+    private String departureCity;
+
     @Column(name = "arrival_date")
     private LocalDateTime arrivalDate;
 
+    @Column(name = "arrival_country")
+    private String arrivalCountry;
+
+    @Column(name = "arrival_city")
+    private String arrivalCity;
+
     @Column(name = "mean_of_transport")
-    @Enumerated(EnumType.STRING)
-    private MeanOfTransport meanOfTransport;
+    private String meanOfTransport;
 
-    private String message;
-
-    public Transport(LocalDateTime departureDate, LocalDateTime arrivalDate, String message) {
-        this.departureDate = departureDate;
-        this.arrivalDate = arrivalDate;
-        this.meanOfTransport = MeanOfTransport.PLANE;
-        this.message = message;
-    }
+    private int seats;
 
     @Override
     public String toString() {
         return "Transport{" +
                 "id=" + id +
                 ", departureDate=" + departureDate +
+                ", departureCountry='" + departureCountry + '\'' +
+                ", departureCity='" + departureCity + '\'' +
                 ", arrivalDate=" + arrivalDate +
-                ", meanOfTransport=" + meanOfTransport +
-                ", message='" + message + '\'' +
+                ", arrivalCountry='" + arrivalCountry + '\'' +
+                ", arrivalCity='" + arrivalCity + '\'' +
+                ", meanOfTransport='" + meanOfTransport + '\'' +
+                ", seats=" + seats +
                 '}';
     }
 }
