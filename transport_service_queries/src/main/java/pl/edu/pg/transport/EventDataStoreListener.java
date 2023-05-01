@@ -1,10 +1,7 @@
 package pl.edu.pg.transport;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,16 +16,9 @@ public class EventDataStoreListener {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public EventDataStoreListener(TransportRepository repository) {
+    public EventDataStoreListener(TransportRepository repository, ObjectMapper objectMapper) {
         this.repository = repository;
-        this.objectMapper = new ObjectMapper();
-        configureObjectMapper();
-    }
-
-    private void configureObjectMapper() {
-        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        this.objectMapper.registerModule(new JavaTimeModule());
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        this.objectMapper = objectMapper;
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.eventDataStore}")
