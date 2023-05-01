@@ -11,3 +11,22 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  transport-commands:
+    build:
+      context: ../transport_service_commands/
+      dockerfile: Dockerfile
+    container_name: transport-commands
+    depends_on:
+      - rabbitmq
+      - transport-commands-db
+
+  transport-commands-db:
+    container_name: transport-commands-db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: transport_commands_db
+    ports:
+      - 5432:5432
