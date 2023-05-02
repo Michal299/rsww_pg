@@ -21,7 +21,6 @@ public class RabbitMQConfig {
         );
         return configurer;
     }
-
     private final String pingQueue;
     private final String pingNotificationQueue;
     private final String username;
