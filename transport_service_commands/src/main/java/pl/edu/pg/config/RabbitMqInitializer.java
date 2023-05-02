@@ -13,9 +13,7 @@ public class RabbitMqInitializer {
     private final static Logger logger = LoggerFactory.getLogger(RabbitMqInitializer.class);
 
     private final Queue createFlightQueue;
-
     private final Queue eventDataStore;
-
     private final AmqpAdmin amqpAdmin;
 
     @Autowired
