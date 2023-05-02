@@ -5,28 +5,38 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class RabbitMQConfig {
 
-    private final String queue;
+    private final String pingQueue;
+    private final String pingNotificationQueue;
     private final String username;
     private final String password;
     private final String host;
 
-    public RabbitMQConfig(@Value("${spring.rabbitmq.ping.queue}") String queue,
+    public RabbitMQConfig(@Value("${spring.rabbitmq.ping.queue}") String pingQueue,
+                          @Value("${spring.rabbitmq.ping.notification.queue}") String pingNotificationQueue,
                           @Value("${spring.rabbitmq.username}") String username,
                           @Value("${spring.rabbitmq.password}") String password,
                           @Value("${spring.rabbitmq.host}") String host) {
 
-        this.queue = queue;
+        this.pingQueue = pingQueue;
+        this.pingNotificationQueue = pingNotificationQueue;
         this.username = username;
         this.password = password;
         this.host = host;
     }
 
-    @Bean
-    Queue queue() {
-        return new Queue(queue, true);
+    @Bean(name="pingQueue")
+    Queue pingQueue() {
+        return new Queue(pingQueue, true);
+    }
+
+    @Bean(name = "pingNotificationQueue")
+    Queue pingNotificationQueue() {
+        return new Queue(pingNotificationQueue, true);
     }
 
     @Bean

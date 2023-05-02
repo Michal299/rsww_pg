@@ -13,10 +13,13 @@ public class PingEventListener {
     private final static Logger logger = LoggerFactory.getLogger(PingEventListener.class);
 
     private final PingRepository repository;
+    private final PingNotificationEventSender eventSender;
 
     @Autowired
-    public PingEventListener(final PingRepository repository) {
+    public PingEventListener(final PingRepository repository,
+                             final PingNotificationEventSender eventSender) {
         this.repository = repository;
+        this.eventSender = eventSender;
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.ping.queue}")
@@ -27,5 +30,6 @@ public class PingEventListener {
         entity.setMessage(message);
         repository.save(entity);
         logger.info("Pings so far: {}", repository.findAll());
+        eventSender.send(entity.toString());
     }
 }
