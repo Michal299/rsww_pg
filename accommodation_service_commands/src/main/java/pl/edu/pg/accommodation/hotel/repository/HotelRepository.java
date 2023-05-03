@@ -1,7 +1,9 @@
 package pl.edu.pg.accommodation.hotel.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import pl.edu.pg.accommodation.hotel.entity.HotelEntity;
-import pl.edu.pg.accommodation.repository.CrudRepository;
 
-public interface HotelRepository extends CrudRepository<HotelEntity, Long> {
+@Repository
+public interface HotelRepository extends JpaRepository<HotelEntity, Long> {
 }

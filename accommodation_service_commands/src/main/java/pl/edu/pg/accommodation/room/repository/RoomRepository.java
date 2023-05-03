@@ -1,7 +1,9 @@
 package pl.edu.pg.accommodation.room.repository;
 
-import pl.edu.pg.accommodation.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import pl.edu.pg.accommodation.room.entity.RoomEntity;
+@Repository
 
-public interface RoomRepository extends CrudRepository<RoomEntity, Long> {
+public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
 }

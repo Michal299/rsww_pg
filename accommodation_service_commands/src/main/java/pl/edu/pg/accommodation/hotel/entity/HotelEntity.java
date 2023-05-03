@@ -22,8 +22,6 @@ public class HotelEntity {
     private String country;
     private String city;
     private int stars;
-    @OneToMany(mappedBy = "hotel")
-    private Set<RoomEntity> rooms;
 
     public Long getId() {
         return id;
@@ -65,14 +63,6 @@ public class HotelEntity {
         this.stars = stars;
     }
 
-    public Set<RoomEntity> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(Set<RoomEntity> rooms) {
-        this.rooms = rooms;
-    }
-
     @Override
     public String toString() {
         return "HotelEntity{" +
@@ -81,7 +71,6 @@ public class HotelEntity {
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", stars=" + stars +
-                ", rooms=" + rooms +
                 '}';
     }
 }
