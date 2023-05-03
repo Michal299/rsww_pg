@@ -1,10 +1,8 @@
 package pl.edu.pg.config;
 
-import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -48,11 +46,6 @@ public class RabbitMqConfig {
         cachingConnectionFactory.setPassword(password);
         cachingConnectionFactory.setPort(Integer.parseInt(port));
         return cachingConnectionFactory;
-    }
-
-    @Bean
-    public AmqpAdmin amqpAdmin() {
-        return new RabbitAdmin(connectionFactory());
     }
 
     @Bean

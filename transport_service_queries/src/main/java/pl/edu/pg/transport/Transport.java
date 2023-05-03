@@ -21,19 +21,4 @@ public class Transport {
     private String arrivalCity;
     private String meanOfTransport;
     private int seats;
-
-    @Override
-    public String toString() {
-        return "Transport{" +
-                "id=" + id +
-                ", departureDate=" + departureDate +
-                ", departureCountry='" + departureCountry + '\'' +
-                ", departureCity='" + departureCity + '\'' +
-                ", arrivalDate=" + arrivalDate +
-                ", arrivalCountry='" + arrivalCountry + '\'' +
-                ", arrivalCity='" + arrivalCity + '\'' +
-                ", meanOfTransport='" + meanOfTransport + '\'' +
-                ", seats=" + seats +
-                '}';
-    }
 }
