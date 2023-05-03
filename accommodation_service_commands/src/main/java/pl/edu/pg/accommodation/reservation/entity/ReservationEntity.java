@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import pl.edu.pg.accommodation.room.entity.RoomEntity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Reservations")
@@ -22,8 +22,8 @@ public class ReservationEntity {
     @ManyToOne
     @JoinColumn(name = "roomId", nullable = false)
     private RoomEntity room;
-    private LocalDateTime reservationStart;
-    private LocalDateTime reservationStop;
+    private LocalDate reservationStart;
+    private LocalDate reservationStop;
     private int numberOfPeople;
 
     public Long getId() {
@@ -42,19 +42,19 @@ public class ReservationEntity {
         this.room = room;
     }
 
-    public LocalDateTime getReservationStart() {
+    public LocalDate getReservationStart() {
         return reservationStart;
     }
 
-    public void setReservationStart(LocalDateTime reservationStart) {
+    public void setReservationStart(LocalDate reservationStart) {
         this.reservationStart = reservationStart;
     }
 
-    public LocalDateTime getReservationStop() {
+    public LocalDate getReservationStop() {
         return reservationStop;
     }
 
-    public void setReservationStop(LocalDateTime reservationStop) {
+    public void setReservationStop(LocalDate reservationStop) {
         this.reservationStop = reservationStop;
     }
 
