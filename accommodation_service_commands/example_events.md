@@ -6,7 +6,22 @@
   "hotelName": "Radisson Hotel",
   "city": "Gdańsk",
   "country": "Poland",
-  "stars": 5
+  "stars": 5,
+  "photo": "url",
+  "rooms": [
+    {
+      "capacity": 4, 
+      "name": "Pokój 4-osobowy", 
+      "features": "klimatyzacja|TV|telefon", 
+      "numberOfRooms": 20
+    },
+    {
+      "capacity": 2,
+      "name": "Pokój 2-osobowy",
+      "features": "klimatyzacja|telefon",
+      "numberOfRooms": 10
+    }
+  ]
 }
 ```
 
