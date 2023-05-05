@@ -29,8 +29,8 @@ public class CreateFlightEventListener {
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.createFlightQueue}")
     public void receiveMessage(Message<CreateFlightEvent> message) {
-        CreateFlightEvent createFlightEvent = message.getPayload();
-        Transport transport = CreateFlightEvent.eventToEntity(createFlightEvent);
+        CreateFlightEvent event = message.getPayload();
+        Transport transport = CreateFlightEvent.eventToEntity(event);
         Transport savedTransport = repository.save(transport);
         rabbitTemplate.convertAndSend(eventDataStore.getName(), savedTransport);
     }

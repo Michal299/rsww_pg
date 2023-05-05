@@ -16,8 +16,8 @@ public class CreateFlightEvent {
     private String arrivalCountry;
     private String arrivalCity;
 
-    public static Transport eventToEntity(CreateFlightEvent createFlightEvent) {
-        return new Transport(createFlightEvent.departureDate, createFlightEvent.departureCountry, createFlightEvent.departureCity,
-                createFlightEvent.arrivalDate, createFlightEvent.arrivalCountry, createFlightEvent.arrivalCity);
+    public static Transport eventToEntity(CreateFlightEvent event) {
+        return new Transport(event.departureDate, event.departureCountry, event.departureCity,
+                event.arrivalDate, event.arrivalCountry, event.arrivalCity);
     }
 }
