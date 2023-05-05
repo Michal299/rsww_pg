@@ -15,8 +15,8 @@ import java.util.function.Function;
 public class AddRoomEvent implements Event {
     private int capacity;
     private float price;
-    private String roomNumber;
     private Long hotelId;
+    private String features;
 
     public static Function<AddRoomEvent, RoomEntity> toEntityMapper(Function<Long, HotelEntity> hotelEntityFunction) {
         return event -> {
@@ -24,7 +24,7 @@ public class AddRoomEvent implements Event {
             room.setPrice(event.getPrice());
             room.setCapacity(event.getCapacity());
             room.setHotel(hotelEntityFunction.apply(event.getHotelId()));
-            room.setRoomNumber(event.getRoomNumber());
+            room.setFeatures(event.getFeatures());
             return room;
         };
     }
