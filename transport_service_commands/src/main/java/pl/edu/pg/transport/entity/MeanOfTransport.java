@@ -1,4 +1,4 @@
-package pl.edu.pg.transport;
+package pl.edu.pg.transport.entity;
 
 enum MeanOfTransport {
     PLANE

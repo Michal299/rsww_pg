@@ -1,12 +1,14 @@
-package pl.edu.pg.transport;
+package pl.edu.pg.transport.entity;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
 @Document("transports")
 public class Transport {
 

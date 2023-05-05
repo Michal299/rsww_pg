@@ -1,6 +1,6 @@
-package pl.edu.pg.transport;
+package pl.edu.pg.transport.event;
 
-public class GetFlightsEvent {
+public class GenericEvent {
     private String source;
 
     public String getSource() {
