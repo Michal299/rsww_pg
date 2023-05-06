@@ -1,5 +1,6 @@
 package pl.edu.pg.trip.config;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -18,5 +19,10 @@ public class RabbitMqConfig {
     public AsyncRabbitTemplate asyncRabbitTemplate(
             RabbitTemplate rabbitTemplate){
         return new AsyncRabbitTemplate(rabbitTemplate);
+    }
+
+    @Bean(name = "exampleResponseQueue")
+    public Queue exampleResponseQueue() {
+        return new Queue("example.client.response", true);
     }
 }
