@@ -1,43 +1,117 @@
-from django.shortcuts import render
-from django.http.request import HttpRequest
-from django.http.response import JsonResponse
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
+import json
 
-from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.serializers import TokenVerifySerializer
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+from django.conf import settings
+from django.contrib.auth import authenticate
 
 from api.models import CustomUser
-from api.serializers import CustomUserSerializer
+from api.amqp import AMQPBasicConsumer, RegisterAMQPConsumer
+from api.serializers import CustomUserSerializer, CustomTokenObtainPairSerializer
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
+@RegisterAMQPConsumer
+class TokenPairAMQPConsumer(AMQPBasicConsumer):
+    """ Consumer of messages for getting pair of tokens needed
+    by users for proper authentication.
 
-        token['username'] = user.username
-        token['firstname'] = user.firstname
-        token['lastname'] = user.lastname
+    NOTES
+    -----
+    Consumer assumes that proper message body contains 'username' and 'password' fields
+    """
+    queue_name = settings.AMQP.get('GET_TOKEN_PAIR_QUEUE', 'GetTokenPair')
+    routing_key = settings.AMQP.get('GET_TOKEN_PAIR_ROUTING_KEY', 'GetTokenPair')
+    required_fields = ('username', 'password')
 
-        return token
+    def on_message_callback(self, ch, method, properties, body) -> None:
+        print(f'<{type(self).__name__}> received message with body: {body}')
+
+        user = self.authenticate_user(body.get('username', ''), body.get('password', ''))
+        if not user:
+            return self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_400_BAD_REQUEST}))
+
+        refresh = CustomTokenObtainPairSerializer.get_token(user)
+        self.reply(ch, method, properties, body=json.dumps({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }).encode('utf-8'))
+
+    def authenticate_user(self, username, password):
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return False
+        return user
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+@RegisterAMQPConsumer
+class TokenRefreshAMQPConsumer(AMQPBasicConsumer):
+    """ Consumer of messages for refreshing user
+    authentication token
+
+    NOTES
+    -----
+    Consumer assumes that proper message body contains 'refresh' field
+    """
+    queue_name = settings.AMQP.get('POST_TOKEN_REFRESH_QUEUE', 'PostTokenRefresh')
+    routing_key = settings.AMQP.get('POST_TOKEN_REFRESH_ROUTING_KEY', 'PostTokenRefresh')
+    required_fields = ('refresh',)
+
+    def on_message_callback(self, ch, method, properties, body) -> None:
+        print(f'<{type(self).__name__}> received message with body: {body}')
+
+        serializer = TokenRefreshSerializer(data=body)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            return self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_400_BAD_REQUEST}))
+
+        self.reply(ch, method, properties, body=json.dumps({
+            'status': status.HTTP_200_OK,
+            **serializer.validated_data
+        }).encode('utf-8'))
 
 
-class CustomUsersView(APIView):
-    permission_classes = (IsAuthenticated,)
+@RegisterAMQPConsumer
+class TokenVerifyAMQPConsumer(AMQPBasicConsumer):
+    """ Consumer of messages for authenticating user
+    operations and user's token validity
 
-    def get(self, request, format=None):
-        user = request.user
+    NOTES
+    -----
+    Consumer assumes that proper message body contains 'token' field
+    """
+    queue_name = settings.AMQP.get('POST_TOKEN_VERIFY_QUEUE', 'PostTokenVerify')
+    routing_key = settings.AMQP.get('POST_TOKEN_VERIFY_ROUTING_KEY', 'PostTokenVerify')
+    required_fields = ('token',)
+
+    def on_message_callback(self, ch, method, properties, body) -> None:
+        print(f'<{type(self).__name__}> received message with body: {body}')
+
+        serializer = TokenVerifySerializer(data=body)
+        try:
+            serializer.is_valid(raise_exception=True)
+            self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_200_OK}))
+        except TokenError as e:
+            self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_401_UNAUTHORIZED}))
+
+
+
+@RegisterAMQPConsumer
+class CustomUsersAMQPConsumer(AMQPBasicConsumer):
+    """ Test consumer of messages for getting list of users accounts.
+    Could be used to check proper communication with AMQP service
+    """
+    queue_name = settings.AMQP.get('GET_USERS_QUEUE', 'GetUsers')
+    routing_key = settings.AMQP.get('GET_USERS_ROUTING_KEY', 'GetUsers')
+
+    def on_message_callback(self, ch, method, properties, body) -> None:
+        print(f'<{type(self).__name__}> received message with body: {body}')
 
         users = CustomUser.objects.all()
-        serializer = CustomUserSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        self.reply(ch, method, properties, body=json.dumps({
+            'users': CustomUserSerializer(users, many=True).data,
+            'status': status.HTTP_200_OK
+        }).encode('utf-8'))
