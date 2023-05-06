@@ -59,4 +59,9 @@ public class ListeningQueuesConfig {
     Queue pingQueue(@Value("${spring.rabbitmq.ping.queue}") String pingQueue) {
         return new Queue(pingQueue, true);
     }
+
+    @Bean
+    Queue exampleQueue() {
+        return new Queue("example.client", true);
+    }
 }
