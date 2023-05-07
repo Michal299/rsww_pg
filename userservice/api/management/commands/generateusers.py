@@ -44,9 +44,12 @@ class Command(BaseCommand):
 
     def _generate_users(self, count: SupportsInt):
         created_count, index = 0, 0
-        curr_usernames, curr_firstnames, curr_lastnames = list(zip(
-            *CustomUser.objects.all().values_list('username', 'firstname', 'lastname')
-        ))
+
+        curr_usernames, curr_firstnames, curr_lastnames = list(), list(), list()
+        if len(CustomUser.objects.all()) > 0:
+            curr_usernames, curr_firstnames, curr_lastnames = list(zip(
+                *CustomUser.objects.all().values_list('username', 'firstname', 'lastname')
+            ))
 
         while created_count < int(count):
             username = f'user{index}'
@@ -55,9 +58,9 @@ class Command(BaseCommand):
                 continue
 
             firstname, lastname = random.choice(self.firstnames), random.choice(self.lastnames)
-            cu = CustomUser.objects.create(username=username, password=username,
-                                           firstname=firstname, lastname=lastname,
-                                           role=CustomUserRoles.USER)
+            cu = CustomUser.objects.create_user(username=username, password=username,
+                                                firstname=firstname, lastname=lastname,
+                                                role=CustomUserRoles.USER)
             self.stdout.write(self.style.SUCCESS(
                 f'Successfully created new {cu!r} model object'
             ))

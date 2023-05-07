@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,8 +57,24 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
+    'TOKEN_OBTAIN_SERIALIZER': 'api.serializers.CustomTokenObtainPairSerializer',
 }
 
+AMQP = {
+    'URL': os.environ.get('AMQP_URL', '127.0.0.1'),
+    'SHOULD_RECONNECT': os.environ.get('AMQP_SHOULD_RECONNECT', False),
+    'RECONNECTION_TRIES': os.environ.get('AMQP_RECONNECTION_TRIES', 5),
+    'RECONNECTION_DELAY': os.environ.get('AMQP_RECONNECTION_DELAY', 5),
+
+    'GET_TOKEN_PAIR_QUEUE': os.environ.get('AMQP_GET_TOKEN_PAIR_QUEUE', 'GetTokenPair'),
+    'GET_TOKEN_PAIR_ROUTING_KEY': os.environ.get('AMQP_GET_TOKEN_ROUTING_KEY', 'GetTokenPair'),
+    'POST_TOKEN_REFRESH_QUEUE': os.environ.get('AMQP_POST_TOKEN_REFRESH_QUEUE', 'PostTokenRefresh'),
+    'POST_TOKEN_REFRESH_ROUTING_KEY': os.environ.get('AMQP_POST_TOKEN_REFRESH_ROUTING_KEY', 'PostTokenRefresh'),
+    'POST_TOKEN_VERIFY_QUEUE': os.environ.get('AMQP_POST_TOKEN_VERIFY_QUEUE', 'PostTokenVerify'),
+    'POST_TOKEN_VERIFY_ROUTING_KEY': os.environ.get('AMQP_POST_TOKEN_VERIFY_ROUTING_KEY', 'PostTokenVerify'),
+    'GET_USERS_QUEUE': os.environ.get('AMQP_GET_USERS_QUEUE', 'GetUsers'),
+    'GET_USERS_ROUTING_KEY': os.environ.get('AMQP_GET_USERS_ROUTING_KEY', 'GetUsers'),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,8 +114,14 @@ WSGI_APPLICATION = 'userservice.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'userservice'),
+        'USER': os.environ.get('DB_USER', 'user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -146,3 +169,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Changing custom user default model
 AUTH_USER_MODEL = 'api.CustomUser'
+
+# RabbitMQ AMPQ configuration variables
+# RABBITMQ_URL = 'amqps://docxvhui:gPTSfsL8hIW6ET_JHqWdmQ0yt18lcPDD@cow.rmq2.cloudamqp.com/docxvhui'
+RABBITMQ_USERNAME = 'docxvhui'
+RABBITMQ_PASSWORD = 'gPTSfsL8hIW6ET_JHqWdmQ0yt18lcPDD'
