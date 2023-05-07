@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import pl.edu.pg.transport.entity.Flight;
 
-import java.time.LocalDateTime;
 import java.util.function.Function;
 
 @Builder
@@ -12,8 +11,8 @@ import java.util.function.Function;
 public class GetFlightDetailsResponse {
     private final String departureAirport;
     private final String arrivalAirport;
-    private final LocalDateTime departureDate;
-    private final LocalDateTime arrivalDate;
+    private final String departureDate;
+    private final String arrivalDate;
     private final int travelTime;
     private final int placesCount;
     private final int placesOccupied;

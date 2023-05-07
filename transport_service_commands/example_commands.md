@@ -5,8 +5,8 @@
 {
   "departureAirport": "Warsaw (KOD)",
   "arrivalAirport": "Paris (CDG)",
-  "departureDate": "2023-04-20T04:15",
-  "arrivalDate": "2023-04-24T22:15",
+  "departureDate": "16.08.2023 21:20",
+  "arrivalDate": "17.08.2023 06:50",
   "travelTime": 105,
   "placesCount": 50
 }
