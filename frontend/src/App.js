@@ -11,32 +11,37 @@ import Login from './pages/Login';
 import Logout from './pages/Logout';
 import TripsList from './pages/TripsList';
 import TripDetails from './pages/TripDetails';
+import PrivateComponent from './components/PrivateComponent';
 
 
 export default function App() {
-  return (
+    return (
     <Router>
-      <AuthProvider>
-      <CollapsibleNavbar />
-      <Container fluid="xl">
+        <AuthProvider>
+        <PrivateComponent>
+            <CollapsibleNavbar />
+        </PrivateComponent>
 
-      <Routes>
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/logout" element={<Logout />} />
-        <Route exact path='/trips' element={<PrivateRoute />}>
-          <Route exact path="/trips" element={<TripsList />} />
-        </Route>
-        <Route exact path='/trips/:id' element={<PrivateRoute />}>
-          <Route exact path="/trips/:id" element={<TripDetails />} />
-        </Route>
-        <Route exact path='/' element={<PrivateRoute />}>
-          <Route exact path="/" element={<Home />} />
-        </Route>
-      </Routes>
+        <Container fluid="xl">
+        <Routes>
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/logout" element={<Logout />} />
+            <Route exact path='/trips' element={<PrivateRoute />}>
+                <Route exact path="/trips" element={<TripsList />} />
+            </Route>
+            <Route exact path='/trips/:id' element={<PrivateRoute />}>
+                <Route exact path="/trips/:id" element={<TripDetails />} />
+            </Route>
+            <Route exact path='/' element={<PrivateRoute />}>
+            <Route exact path="/" element={<Home />} />
+            </Route>
+        </Routes>
+        </Container>
 
-      </Container>
-      <Footer />
-      </AuthProvider>
+        <PrivateComponent>
+            <Footer />
+        </PrivateComponent>
+        </AuthProvider>
     </Router>
   );
 }
