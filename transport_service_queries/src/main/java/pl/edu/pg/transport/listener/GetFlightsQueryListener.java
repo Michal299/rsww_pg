@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import pl.edu.pg.transport.dto.GetFlightsResponse;
 import pl.edu.pg.transport.entity.Flight;
 import pl.edu.pg.transport.query.GetFlightsQuery;
 import pl.edu.pg.transport.repository.FlightRepository;
@@ -29,7 +30,7 @@ public class GetFlightsQueryListener {
     @RabbitListener(queues = "${spring.rabbitmq.queue.getFlightsQueue}")
     public void receiveMessage(Message<GetFlightsQuery> message) {
         List<Flight> flights = repository.findAll();
-        rabbitTemplate.convertAndSend(message.getPayload().getSource(), flights);
-        logger.info("All transports were sent to the {} queue.", message.getPayload().getSource());
+        rabbitTemplate.convertAndSend(message.getPayload().getSource(), GetFlightsResponse.entityToDtoMapper().apply(flights));
+        logger.info("All flights were sent to the {} queue.", message.getPayload().getSource());
     }
 }

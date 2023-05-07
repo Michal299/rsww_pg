@@ -30,7 +30,7 @@ public class CreateFlightCommandListener {
     @RabbitListener(queues = "${spring.rabbitmq.queue.createFlightQueue}")
     public void receiveMessage(Message<CreateFlightCommand> message) {
         CreateFlightCommand command = message.getPayload();
-        Flight flight = CreateFlightCommand.commandToEntity(command);
+        Flight flight = CreateFlightCommand.commandToEntityMapper(command);
         Flight savedFlight = repository.save(flight);
         rabbitTemplate.convertAndSend(eventDataStore.getName(), savedFlight);
     }

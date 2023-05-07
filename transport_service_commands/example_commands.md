@@ -3,11 +3,11 @@
 **Create flight**
 ```json
 {
-  "departureDate": "2023-04-24T14:15",
-  "departureCountry": "Spain",
-  "departureCity": "Barcelona",
-  "arrivalDate": "2023-04-24T18:15",
-  "arrivalCountry": "Greece",
-  "arrivalCity": "Athens"
+  "departureAirport": "Warsaw (KOD)",
+  "arrivalAirport": "Paris (CDG)",
+  "departureDate": "2023-04-20T04:15",
+  "arrivalDate": "2023-04-24T22:15",
+  "travelTime": 105,
+  "placesCount": 50
 }
 ```

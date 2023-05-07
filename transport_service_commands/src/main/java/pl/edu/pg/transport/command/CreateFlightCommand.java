@@ -14,7 +14,7 @@ public class CreateFlightCommand {
     private int travelTime;
     private int placesCount;
 
-    public static Flight commandToEntity(CreateFlightCommand command) {
+    public static Flight commandToEntityMapper(CreateFlightCommand command) {
         return new Flight(command.getDepartureAirport(), command.getArrivalAirport(),
                 command.getDepartureDate(), command.getArrivalDate(),
                 command.getTravelTime(), command.getPlacesCount());
