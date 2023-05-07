@@ -7,29 +7,29 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
-import pl.edu.pg.transport.entity.Transport;
-import pl.edu.pg.transport.event.GetFlightsEvent;
-import pl.edu.pg.transport.repository.TransportRepository;
+import pl.edu.pg.transport.entity.Flight;
+import pl.edu.pg.transport.query.GetFlightsQuery;
+import pl.edu.pg.transport.repository.FlightRepository;
 
 import java.util.List;
 
 @Component
-public class GetFlightsEventListener {
-    private final static Logger logger = LoggerFactory.getLogger(GetFlightsEventListener.class);
+public class GetFlightsQueryListener {
+    private final static Logger logger = LoggerFactory.getLogger(GetFlightsQueryListener.class);
 
-    private final TransportRepository repository;
+    private final FlightRepository repository;
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public GetFlightsEventListener(TransportRepository repository, RabbitTemplate rabbitTemplate) {
+    public GetFlightsQueryListener(FlightRepository repository, RabbitTemplate rabbitTemplate) {
         this.repository = repository;
         this.rabbitTemplate = rabbitTemplate;
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.getFlightsQueue}")
-    public void receiveMessage(Message<GetFlightsEvent> message) {
-        List<Transport> transports = repository.findAll();
-        rabbitTemplate.convertAndSend(message.getPayload().getSource(), transports);
+    public void receiveMessage(Message<GetFlightsQuery> message) {
+        List<Flight> flights = repository.findAll();
+        rabbitTemplate.convertAndSend(message.getPayload().getSource(), flights);
         logger.info("All transports were sent to the {} queue.", message.getPayload().getSource());
     }
 }

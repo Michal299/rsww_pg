@@ -7,18 +7,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Getter
-@Document("transports")
-public class Transport {
+@Document("flights")
+public class Flight {
 
     @Id
     private Long id;
 
+    private String departureAirport;
+    private String arrivalAirport;
     private LocalDateTime departureDate;
-    private String departureCountry;
-    private String departureCity;
     private LocalDateTime arrivalDate;
-    private String arrivalCountry;
-    private String arrivalCity;
-    private String meanOfTransport;
-    private int seats;
+    private int travelTime;
+    private int placesCount;
+    private int placesOccupied;
 }
