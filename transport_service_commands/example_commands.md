@@ -1,6 +1,6 @@
 # Flight
 
-**Create flight**
+**Add flight**
 ```json
 {
   "departureAirport": "Warsaw (KOD)",

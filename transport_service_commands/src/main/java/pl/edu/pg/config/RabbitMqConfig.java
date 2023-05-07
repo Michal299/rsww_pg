@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
 
-    @Value("${spring.rabbitmq.queue.createFlightQueue}")
-    private String createFlightQueue;
+    @Value("${spring.rabbitmq.queue.addFlightQueue}")
+    private String addFlightQueue;
 
     @Value("${spring.rabbitmq.queue.eventDataStore}")
     private String eventDataStore;
@@ -32,8 +32,8 @@ public class RabbitMqConfig {
     private String port;
 
     @Bean
-    public Queue createFlightQueue() {
-        return new Queue(createFlightQueue, true);
+    public Queue addFlightQueue() {
+        return new Queue(addFlightQueue, true);
     }
 
     @Bean

@@ -4,7 +4,7 @@ import lombok.Getter;
 import pl.edu.pg.transport.entity.Flight;
 
 @Getter
-public class CreateFlightCommand {
+public class AddFlightCommand {
     private String departureAirport;
     private String arrivalAirport;
     private String departureDate;
@@ -12,7 +12,7 @@ public class CreateFlightCommand {
     private int travelTime;
     private int placesCount;
 
-    public static Flight commandToEntityMapper(CreateFlightCommand command) {
+    public static Flight commandToEntityMapper(AddFlightCommand command) {
         return new Flight(command.getDepartureAirport(), command.getArrivalAirport(),
                 command.getDepartureDate(), command.getArrivalDate(),
                 command.getTravelTime(), command.getPlacesCount());
