@@ -12,6 +12,7 @@ import Logout from './pages/Logout';
 import TripsList from './pages/TripsList';
 import TripDetails from './pages/TripDetails';
 import PrivateComponent from './components/PrivateComponent';
+import MyReservations from './pages/MyReservations';
 
 
 export default function App() {
@@ -31,6 +32,9 @@ export default function App() {
             </Route>
             <Route exact path='/trips/:id' element={<PrivateRoute />}>
                 <Route exact path="/trips/:id" element={<TripDetails />} />
+            </Route>
+            <Route exact path='/my-reservations' element={<PrivateRoute />}>
+                <Route exact path="/my-reservations" element={<MyReservations />} />
             </Route>
             <Route exact path='/' element={<PrivateRoute />}>
             <Route exact path="/" element={<Home />} />

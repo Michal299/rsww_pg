@@ -7,6 +7,7 @@ import { faSun, faUserCircle, faRightFromBracket } from "@fortawesome/free-solid
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
+import { Button } from "react-bootstrap";
 
 
 const CollapsibleNavbar = () => {
@@ -30,6 +31,9 @@ const CollapsibleNavbar = () => {
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav" className="d-flex justify-content-end" >
                         <Nav>
+                            <Nav.Item>
+                                <Link to={"/my-reservations"} className="btn btn-outline-success">My Reservations</Link>
+                            </Nav.Item>
                             <NavDropdown
                                 title={<FontAwesomeIcon icon={faUserCircle} className="fa-xl" />}
                             >

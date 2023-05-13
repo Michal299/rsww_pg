@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import UrlBuilder from "../components/UrlBuilder";
 
 
 const AuthContext = createContext();
@@ -10,16 +11,16 @@ export default AuthContext;
 export const AuthProvider = ({children}) => {
 
     const navigate = useNavigate();
+    const urlBuilder = new UrlBuilder();
 
-    const authTokenUrl = 'http://127.0.0.1:8000/api/token/';
-    const refreshAuthTokenUrl = authTokenUrl + 'refresh/';
+    const authTokenUrl = urlBuilder.build('REACT_APP_API_ROOT_URL', 'REACT_APP_API_LOGIN_URL');
+    const refreshAuthTokenUrl = urlBuilder.build('REACT_APP_API_ROOT_URL', 'REACT_APP_API_TOKEN_REFRESH_URL');
 
     let localStorageAuthTokens = localStorage.getItem('authTokens');
 
     let [authTokens, setAuthTokens] = useState(() => localStorageAuthTokens ? JSON.parse(localStorageAuthTokens) : null);
     let [user, setUser] = useState(() => localStorageAuthTokens ? jwt_decode(localStorageAuthTokens) : null);
-    let [loading, setLoading] = useState(true);
-
+    // let [loading, setLoading] = useState(true);
 
     let loginUser = async (username, password) => {
         let response = await fetch(authTokenUrl, {
@@ -50,7 +51,6 @@ export const AuthProvider = ({children}) => {
     }
 
     let updateToken = async () => {
-        console.log('UPDATE');
         let response = await fetch(refreshAuthTokenUrl, {
             method: 'POST',
             headers: {
@@ -69,9 +69,9 @@ export const AuthProvider = ({children}) => {
             navigate('/login');
         }
 
-        if(loading){
-            setLoading(false);
-        }
+        // if(loading){
+        //     setLoading(false);
+        // }
 
         return response;
     }
@@ -84,24 +84,24 @@ export const AuthProvider = ({children}) => {
     }
 
     useEffect(() => {
-        if(loading) {
-            updateToken();
-        }
+        // if(loading) {
+        //     updateToken();
+        // }
 
         let fourteenMinutes = 14 * 60 * 1000;
 
-        let interval =  setInterval(()=> {
+        let interval = setInterval(()=> {
             if(authTokens){
                 updateToken();
             }
         }, fourteenMinutes);
         return () => clearInterval(interval)
 
-    }, [authTokens, loading])
+    }, [authTokens /*, loading*/])
 
     return (
         <AuthContext.Provider value={contextData}>
-            {loading ? null : children}
+            {children}
         </AuthContext.Provider>
     )
 }
