@@ -22,13 +22,11 @@ class TokenPairAMQPConsumer(AMQPBasicConsumer):
     -----
     Consumer assumes that proper message body contains 'username' and 'password' fields
     """
-    queue_name = settings.AMQP.get('GET_TOKEN_PAIR_QUEUE', 'GetTokenPair')
-    routing_key = settings.AMQP.get('GET_TOKEN_PAIR_ROUTING_KEY', 'GetTokenPair')
+    queue_name = settings.AMQP.get('POST_TOKEN_PAIR_QUEUE', 'PostTokenPair')
+    routing_key = settings.AMQP.get('POST_TOKEN_PAIR_ROUTING_KEY', 'PostTokenPair')
     required_fields = ('username', 'password')
 
     def on_message_callback(self, ch, method, properties, body) -> None:
-        print(f'<{type(self).__name__}> received message with body: {body}')
-
         user = self.authenticate_user(body.get('username', ''), body.get('password', ''))
         if not user:
             return self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_400_BAD_REQUEST}))
@@ -60,8 +58,6 @@ class TokenRefreshAMQPConsumer(AMQPBasicConsumer):
     required_fields = ('refresh',)
 
     def on_message_callback(self, ch, method, properties, body) -> None:
-        print(f'<{type(self).__name__}> received message with body: {body}')
-
         serializer = TokenRefreshSerializer(data=body)
         try:
             serializer.is_valid(raise_exception=True)
@@ -88,15 +84,12 @@ class TokenVerifyAMQPConsumer(AMQPBasicConsumer):
     required_fields = ('token',)
 
     def on_message_callback(self, ch, method, properties, body) -> None:
-        print(f'<{type(self).__name__}> received message with body: {body}')
-
         serializer = TokenVerifySerializer(data=body)
         try:
             serializer.is_valid(raise_exception=True)
             self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_200_OK}))
         except TokenError as e:
             self.reply(ch, method, properties, body=json.dumps({'status': status.HTTP_401_UNAUTHORIZED}))
-
 
 
 @RegisterAMQPConsumer
@@ -108,8 +101,6 @@ class CustomUsersAMQPConsumer(AMQPBasicConsumer):
     routing_key = settings.AMQP.get('GET_USERS_ROUTING_KEY', 'GetUsers')
 
     def on_message_callback(self, ch, method, properties, body) -> None:
-        print(f'<{type(self).__name__}> received message with body: {body}')
-
         users = CustomUser.objects.all()
         self.reply(ch, method, properties, body=json.dumps({
             'users': CustomUserSerializer(users, many=True).data,

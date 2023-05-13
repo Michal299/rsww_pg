@@ -2,6 +2,7 @@ import json
 import pika
 import time
 import threading
+import logging
 from typing import Iterable
 
 from django.conf import settings
@@ -46,6 +47,7 @@ class AMQPBasicConsumer(object):
         self._conn_params = None
         self.required_fields = self.required_fields if self.required_fields is not None else list()
         self._connection_tries = 0
+        self._logger = logging.getLogger(__name__)
         self._validate_state()
         self._config_connection()
 
@@ -59,6 +61,7 @@ class AMQPBasicConsumer(object):
         """ Reply on received message with provided body
         and pika package parameters appears with received message
         """
+        self._logger.info(f'<{type(self).__name__}> has replied for received message')
         ch.basic_publish('', routing_key=properties.reply_to, body=body)
 
     def start_consuming(self):
@@ -69,6 +72,7 @@ class AMQPBasicConsumer(object):
         self._channel.start_consuming()
 
     def _on_message_precallback(self, ch, method, properties, body):
+        self._logger.info(f'<{type(self).__name__}> has received message with body: {body}')
         try:
             body = json.loads(body) if len(body) > 0 else dict()
         except json.JSONDecodeError:

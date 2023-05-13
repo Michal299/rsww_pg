@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
+import logging
+
+
+# Logging settings
+logging.basicConfig(
+    format='%(asctime)s LOG: %(message)s',
+    level=logging.INFO
+)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,8 +75,8 @@ AMQP = {
     'RECONNECTION_TRIES': os.environ.get('AMQP_RECONNECTION_TRIES', 5),
     'RECONNECTION_DELAY': os.environ.get('AMQP_RECONNECTION_DELAY', 5),
 
-    'GET_TOKEN_PAIR_QUEUE': os.environ.get('AMQP_GET_TOKEN_PAIR_QUEUE', 'GetTokenPair'),
-    'GET_TOKEN_PAIR_ROUTING_KEY': os.environ.get('AMQP_GET_TOKEN_ROUTING_KEY', 'GetTokenPair'),
+    'POST_TOKEN_PAIR_QUEUE': os.environ.get('AMQP_POST_TOKEN_PAIR_QUEUE', 'PostTokenPair'),
+    'POST_TOKEN_PAIR_ROUTING_KEY': os.environ.get('AMQP_POST_TOKEN_ROUTING_KEY', 'PostTokenPair'),
     'POST_TOKEN_REFRESH_QUEUE': os.environ.get('AMQP_POST_TOKEN_REFRESH_QUEUE', 'PostTokenRefresh'),
     'POST_TOKEN_REFRESH_ROUTING_KEY': os.environ.get('AMQP_POST_TOKEN_REFRESH_ROUTING_KEY', 'PostTokenRefresh'),
     'POST_TOKEN_VERIFY_QUEUE': os.environ.get('AMQP_POST_TOKEN_VERIFY_QUEUE', 'PostTokenVerify'),
