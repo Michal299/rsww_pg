@@ -1,9 +1,9 @@
-package pl.edu.pg.gateway.transport.dto;
+package pl.edu.pg.gateway.transport.query;
 
 import lombok.Builder;
 
 @Builder
-public class GetFlightDetailsDto {
+public class GetFlightDetailsQuery {
     private long id;
 
     public long getId() {
