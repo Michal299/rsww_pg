@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 @Builder
 @Getter
-public class GetFlightDetailsResponse {
+public class GetFlightDetailsResponse implements Response {
     private final String departureAirport;
     private final String arrivalAirport;
     private final String departureDate;
