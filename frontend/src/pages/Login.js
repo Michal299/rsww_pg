@@ -24,13 +24,16 @@ const Login = () => {
         event.preventDefault();
         
         setIsLoggingIn(true);
-        let response = await loginUser(username, password);
-        setIsLoggingIn(false);
-        
-        if(response.status === 200) {
-            navigate('/');
-        } else {
-            alert('Something went wrong. Status code: ' + response.status);
+        try {
+            let response = await loginUser(username, password);
+            if(response.status === 200)
+                navigate('/');
+            else
+                alert(`Something went wrong. Status code: ${response.status}`);
+        } catch (error) {
+            alert(`Error has occured ${error}`);
+        } finally {
+            setIsLoggingIn(false);
         }
     }
 

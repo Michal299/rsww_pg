@@ -41,10 +41,10 @@ export default function TripDeparturePlaceInput({departurePlace, setDeparturePla
                 >
                     {
                     isPending ?
-                        <option value="all">Any</option>
+                        <option value="all" key="all">Any</option>
                     :
                         data.departurePlaces.map((place) => (
-                            <option value={place}>{place}</option>
+                            <option value={place} key={place}>{place}</option>
                         ))
                     }
                 </Form.Select>

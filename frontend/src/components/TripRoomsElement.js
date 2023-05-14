@@ -35,7 +35,7 @@ const TripRoomsElement = ({room, setRoom}) => {
                     <div className="text-muted">Features</div>
                     <ul className="g-0 ps-4">
                         {features.map((feature) => (
-                            <li>{feature}</li>
+                            <li key={feature}>{feature}</li>
                         ))}
                     </ul>
                 </div>

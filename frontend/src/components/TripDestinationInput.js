@@ -44,7 +44,7 @@ export default function TripDeparturePlaceInput({destination, setDestination}) {
                         null
                     :
                         data.destinations.map((dest) => (
-                            <option value={dest}>{dest}</option>
+                            <option value={dest} key={dest}>{dest}</option>
                         ))
                     }
                 </Form.Select>

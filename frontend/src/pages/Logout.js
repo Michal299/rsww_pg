@@ -2,7 +2,6 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import Login from "./Login";
 import { Button } from "react-bootstrap";
 
 
@@ -10,10 +9,10 @@ export default class Logout extends React.Component {
 
     render() {
         return (
-            <div className="row">
-            <div className="d-none d-lg-block d-lg-block col-lg-3"></div>
+            <div className="row g-0">
+            <div className="d-none d-lg-block col-lg-3"></div>
             
-            <div className="login col col-lg-6 d-flex flex-column min-vh-100 g-5">
+            <div className="logout col col-lg-6 d-flex flex-column min-vh-100">
             <div className="mx-auto my-auto align-middle w-100 rounded p-3 border shadow">
                 <div className="text-warning fs-3 text-center mb-3 border-bottom pb-3">
                     <FontAwesomeIcon icon={ faSun } className="fa-fw fa-spin me-1" />
