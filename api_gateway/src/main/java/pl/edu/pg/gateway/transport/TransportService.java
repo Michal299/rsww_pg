@@ -11,7 +11,7 @@ import pl.edu.pg.gateway.transport.dto.GetFlightDetailsDto;
 @Service
 class TransportService {
     private final RabbitTemplate rabbitTemplate;
-    private static final String ROUTING_KEY = "GetFlightDetailsQueue";
+    private static final String GET_FLIGHT_DETAILS_QUEUE = "GetFlightDetailsQueue";
 
     @Autowired
     TransportService(RabbitTemplate rabbitTemplate) {
@@ -23,10 +23,11 @@ class TransportService {
                 .id(id)
                 .build();
         var getFlightDetailsResponse = rabbitTemplate.convertSendAndReceiveAsType(
-                ROUTING_KEY,
+                GET_FLIGHT_DETAILS_QUEUE,
                 getFlightDetailsDto,
                 new ParameterizedTypeReference<>() {
                 });
         return new ResponseEntity<>(getFlightDetailsResponse, HttpStatus.OK);
     }
+
 }

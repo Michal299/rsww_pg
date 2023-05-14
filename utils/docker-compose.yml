@@ -46,3 +46,12 @@ services:
       MONGO_INITDB_DATABASE: transport_queries_db
     ports:
       - 27017:27017
+
+  api-gateway:
+    build:
+      context: ../api_gateway/
+      dockerfile: Dockerfile
+    container_name: 'api-gateway'
+    restart: always
+    ports:
+      - 8080:8080
