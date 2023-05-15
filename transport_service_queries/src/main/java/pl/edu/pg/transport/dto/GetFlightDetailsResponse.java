@@ -8,7 +8,8 @@ import java.util.function.Function;
 
 @Builder
 @Getter
-public class GetFlightDetailsResponse implements Response {
+public class GetFlightDetailsResponse {
+    private final long id;
     private final String departureAirport;
     private final String arrivalAirport;
     private final String departureDate;
@@ -20,6 +21,7 @@ public class GetFlightDetailsResponse implements Response {
     public static Function<Flight, GetFlightDetailsResponse> entityToDtoMapper() {
         return flight -> GetFlightDetailsResponse
                 .builder()
+                .id(flight.getId())
                 .departureAirport(flight.getDepartureAirport())
                 .arrivalAirport(flight.getArrivalAirport())
                 .departureDate(flight.getDepartureDate())

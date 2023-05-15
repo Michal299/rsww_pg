@@ -1,4 +1,4 @@
-package pl.edu.pg.gateway.transport.query;
+package pl.edu.pg.gateway.transport.dto;
 
 import lombok.Builder;
 

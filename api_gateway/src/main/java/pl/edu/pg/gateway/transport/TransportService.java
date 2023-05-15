@@ -6,7 +6,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import pl.edu.pg.gateway.transport.query.GetFlightDetailsQuery;
+import pl.edu.pg.gateway.transport.dto.GetFlightDetailsQuery;
+import pl.edu.pg.gateway.transport.dto.GetFlightDetailsResponse;
 
 @Service
 class TransportService {
@@ -18,16 +19,19 @@ class TransportService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    ResponseEntity<Object> getFlightDetails(Long id) {
-        GetFlightDetailsQuery getFlightDetailsQuery = GetFlightDetailsQuery.builder()
+    ResponseEntity<GetFlightDetailsResponse> getFlightDetails(Long id) {
+        GetFlightDetailsQuery query = GetFlightDetailsQuery.builder()
                 .id(id)
                 .build();
-        var getFlightDetailsResponse = rabbitTemplate.convertSendAndReceiveAsType(
+        GetFlightDetailsResponse response = rabbitTemplate.convertSendAndReceiveAsType(
                 GET_FLIGHT_DETAILS_QUEUE,
-                getFlightDetailsQuery,
+                query,
                 new ParameterizedTypeReference<>() {
                 });
-        return new ResponseEntity<>(getFlightDetailsResponse, HttpStatus.OK);
+        if (response != null && response.getId() == -1) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
