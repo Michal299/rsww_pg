@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.edu.pg.gateway.user.dto.TokenDto;
-import pl.edu.pg.gateway.user.dto.UserDto;
+import pl.edu.pg.gateway.user.dto.*;
 
 @RestController
 @RequestMapping("/api/token")
@@ -20,17 +19,13 @@ class UserController {
     }
 
     @PostMapping
-    ResponseEntity<Object> loginUser(@RequestBody UserDto userDto) {
+    ResponseEntity<PostTokenPairResponse> loginUser(@RequestBody UserDto userDto) {
         return userService.loginUser(userDto);
     }
 
     @PostMapping("refresh")
-    ResponseEntity<String> refreshToken(@RequestBody TokenDto tokenDto) {
+    ResponseEntity<PostTokenRefreshResponse> refreshToken(@RequestBody RefreshTokenDto tokenDto) {
         return userService.refreshToken(tokenDto);
     }
 
-    @PostMapping("verify")
-    ResponseEntity<String> verifyToken(@RequestBody TokenDto tokenDto) {
-        return userService.verifyToken(tokenDto);
-    }
 }
