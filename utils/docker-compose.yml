@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+
+  rabbitmq:
+    container_name: 'rabbitmq'
+    image: rabbitmq:3.8-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  transport-commands:
+    build:
+      context: ../transport_service_commands/
+      dockerfile: Dockerfile
+    container_name: 'transport-commands'
+    restart: always
+    depends_on:
+      - transport-commands-db
+
+  transport-commands-db:
+    container_name: 'transport-commands-db'
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: transport_commands_db
+    ports:
+      - 5432:5432
+
+  transport-queries:
+    build:
+      context: ../transport_service_queries/
+      dockerfile: Dockerfile
+    container_name: 'transport-queries'
+    restart: always
+    depends_on:
+      - transport-queries-db
+
+  transport-queries-db:
+    container_name: 'transport-queries-db'
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: transport_queries_db
+    ports:
+      - 27017:27017
+
+  payment:
+    build:
+      context: ../payment_service
+      dockerfile: Dockerfile
+    container_name: 'payment'
+    environment:
+      - AMQP_URL=rabbitmq
+      - REJECTION_PROBABILITY=10
+    depends_on:
+      - rabbitmq

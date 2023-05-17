@@ -62,7 +62,7 @@ class AMQPBasicConsumer(object):
         and pika package parameters appears with received message
         """
         self._logger.info(f'<{type(self).__name__}> has replied for received message')
-        ch.basic_publish('', routing_key=properties.reply_to, body=body)
+        ch.basic_publish('', routing_key=properties.reply_to, properties=properties, body=body)
 
     def start_consuming(self):
         """ Start loop of consuming messages.
