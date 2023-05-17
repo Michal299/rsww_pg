@@ -2,6 +2,7 @@ package pl.edu.pg.gateway.transport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ class TransportController {
         this.transportService = transportService;
     }
 
+    @CrossOrigin(origins = "http://localhost:80")
     @GetMapping("{id}")
     ResponseEntity<GetFlightDetailsResponse> getFlightDetails(@PathVariable Long id) {
         return transportService.getFlightDetails(id);
