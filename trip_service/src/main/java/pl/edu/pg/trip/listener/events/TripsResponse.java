@@ -6,6 +6,7 @@ import lombok.extern.jackson.Jacksonized;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -22,8 +23,8 @@ public class TripsResponse {
         private Long id;
         private Hotel hotel;
         private Float tripPrice;
-        private LocalDate dateStart;
-        private LocalDate dateEnd;
+        private String dateStart;
+        private String dateEnd;
     }
 
     @Data
