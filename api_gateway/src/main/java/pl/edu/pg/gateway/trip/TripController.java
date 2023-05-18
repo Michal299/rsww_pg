@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pg.gateway.trip.dto.TripsResponse;
 
 @RestController
-@RequestMapping("/api/trips/")
+@RequestMapping("/api/trip/")
 public class TripController {
 
     private final TripService tripService;

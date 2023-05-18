@@ -39,7 +39,7 @@ public class TripEventsListener {
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.trip.get.all}")
     public TripsResponse getTrips(TripsRequest request, Message message) {
-        log.info("Request: ", request);
+        log.info("Request: {}", request);
         final Random random = new Random();
         final var trips = tripService.getTrips();
 
@@ -64,6 +64,7 @@ public class TripEventsListener {
                         })
                         .collect(Collectors.toList()))
                 .build();
+        log.info("Response: {}", response);
         return response;
     }
 }

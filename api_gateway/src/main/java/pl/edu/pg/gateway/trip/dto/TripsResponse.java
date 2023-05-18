@@ -20,8 +20,8 @@ public class TripsResponse {
         private Long id;
         private Hotel hotel;
         private Float tripPrice;
-        private LocalDate dateStart;
-        private LocalDate dateEnd;
+        private String dateStart;
+        private String dateEnd;
     }
 
     @Data
