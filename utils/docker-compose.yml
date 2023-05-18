@@ -92,6 +92,7 @@ services:
       - rabbitmq
 
   accommodation_service_commands:
+    container_name: accommodation_service_commands
     build: 
       context: ../accommodation_service_commands
       dockerfile: Dockerfile
@@ -115,6 +116,7 @@ services:
     build: 
       context: ../accommodation_service_queries
       dockerfile: Dockerfile
+    container_name: accommodation_service_queries
     depends_on:
       - rabbitmq
       - mongo-db
@@ -130,6 +132,7 @@ services:
       - RABBIT_PWD=guest
 
   trip_service:
+    container_name: trip_service
     build: 
       context: ../trip_service
       dockerfile: Dockerfile
