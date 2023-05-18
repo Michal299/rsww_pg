@@ -123,6 +123,18 @@ services:
     depends_on:
       - rabbitmq
       - postgres-db
+    environment:
+      - POSTGRES_HOST=postgres-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=accommodation_service
+      - POSTGRES_USER=admin
+      - POSTGRES_PWD=admin
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USR=guest
+      - RABBIT_PWD=guest
+
+
 
   accommodation_service_queries:
     build:
@@ -131,6 +143,16 @@ services:
     depends_on:
       - rabbitmq
       - mongo-db
+    environment:
+      - MONGO_USER=admin
+      - MONGO_USER_PWD=admin
+      - MONGO_HOST=mongo-db
+      - DATABASE_NAME=trips
+      - MONGO_PORT=27017
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USR=guest
+      - RABBIT_PWD=guest
 
   trip_service:
     build:
