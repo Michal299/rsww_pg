@@ -17,13 +17,13 @@ class TransportController {
         this.transportService = transportService;
     }
 
-    @CrossOrigin(origins = "http://localhost:80")
+    @CrossOrigin(origins = "http://frontend:80")
     @GetMapping("{id}")
     ResponseEntity<GetFlightDetailsResponse> getFlightDetails(@PathVariable Long id) {
         return transportService.getFlightDetails(id);
     }
 
-    @CrossOrigin(origins = "http://localhost:80")
+    @CrossOrigin(origins = "http://frontend:80")
     @GetMapping
     ResponseEntity<List<GetFlightDetailsResponse>> getFlights() {
         return transportService.getFlights();

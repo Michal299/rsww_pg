@@ -22,13 +22,13 @@ class UserController {
         this.userService = userService;
     }
 
-    @CrossOrigin(origins = "http://localhost:80")
+    @CrossOrigin(origins = "http://frontend:80")
     @PostMapping
     ResponseEntity<PostTokenPairResponse> loginUser(@RequestBody UserDto userDto) {
         return userService.loginUser(userDto);
     }
 
-    @CrossOrigin(origins = "http://localhost:80")
+    @CrossOrigin(origins = "http://frontend:80")
     @PostMapping("refresh")
     ResponseEntity<PostTokenRefreshResponse> refreshToken(@RequestBody RefreshTokenDto tokenDto) {
         return userService.refreshToken(tokenDto);
