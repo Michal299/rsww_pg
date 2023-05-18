@@ -90,3 +90,38 @@ services:
       - REJECTION_PROBABILITY=10
     depends_on:
       - rabbitmq
+
+  accommodation_service_commands:
+    build: 
+      context: ../accommodation_service_commands
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - postgres-db
+
+  accommodation_service_queries:
+    build: 
+      context: ../accommodation_service_queries
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - mongo-db
+
+  trip_service:
+    build: 
+      context: ../trip_service
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - mongo-db
+    environment:
+      - MONGO_USER=admin
+      - MONGO_USER_PWD=admin
+      - MONGO_HOST=mongo-db
+      - DATABASE_NAME=trips
+      - MONGO_PORT=27017
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USR=guest
+      - RABBIT_PWD=guest
+      
