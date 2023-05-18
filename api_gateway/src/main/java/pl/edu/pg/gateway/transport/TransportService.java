@@ -8,11 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.edu.pg.gateway.transport.dto.GetFlightDetailsQuery;
 import pl.edu.pg.gateway.transport.dto.GetFlightDetailsResponse;
+import pl.edu.pg.gateway.transport.dto.GetFlightsQuery;
+
+import java.util.List;
 
 @Service
 class TransportService {
     private final RabbitTemplate rabbitTemplate;
     private static final String GET_FLIGHT_DETAILS_QUEUE = "GetFlightDetailsQueue";
+    private static final String GET_FLIGHTS_QUEUE = "GetFlightsQueue";
 
     @Autowired
     TransportService(RabbitTemplate rabbitTemplate) {
@@ -31,6 +35,15 @@ class TransportService {
         if (response != null && response.getId() == -1) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    ResponseEntity<List<GetFlightDetailsResponse>> getFlights() {
+        List<GetFlightDetailsResponse> response = rabbitTemplate.convertSendAndReceiveAsType(
+                GET_FLIGHTS_QUEUE,
+                new GetFlightsQuery(),
+                new ParameterizedTypeReference<>() {
+                });
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
