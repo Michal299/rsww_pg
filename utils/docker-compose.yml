@@ -17,6 +17,16 @@ services:
     depends_on:
       - rabbitmq
       - postgres-db
+    environment:
+      - POSTGRES_USR=admin
+      - POSTGRES_PWD=admin
+      - POSTGRES_HOST=postgres-db
+      - POSTGRES_DATABASE=rsww
+      - POSTGRES_PORT=5432
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USR=guest
+      - RABBIT_PWD=guest
 
   postgres-db:
     container_name: 'postgres-db'
@@ -37,6 +47,16 @@ services:
     depends_on:
       - rabbitmq
       - mongo-db
+    environment:
+      - MONGO_USER=admin
+      - MONGO_PWD=admin
+      - MONGO_HOST=mongo-db
+      - MONGO_DATABASE=rsww
+      - MONGO_PORT=27017
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USR=guest
+      - RABBIT_PWD=guest
 
   mongo-db:
     container_name: 'mongo-db'
@@ -56,6 +76,11 @@ services:
     restart: always
     ports:
       - 8080:8080
+    environment:
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USR=guest
+      - RABBIT_PWD=guest
 
   userservice:
     container_name: 'userservice'
@@ -92,7 +117,7 @@ services:
       - rabbitmq
 
   accommodation_service_commands:
-    build: 
+    build:
       context: ../accommodation_service_commands
       dockerfile: Dockerfile
     depends_on:
@@ -100,7 +125,7 @@ services:
       - postgres-db
 
   accommodation_service_queries:
-    build: 
+    build:
       context: ../accommodation_service_queries
       dockerfile: Dockerfile
     depends_on:
@@ -108,7 +133,7 @@ services:
       - mongo-db
 
   trip_service:
-    build: 
+    build:
       context: ../trip_service
       dockerfile: Dockerfile
     depends_on:
