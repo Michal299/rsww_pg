@@ -97,13 +97,13 @@ services:
       - rabbitmq
       - postgres-db
 
-#  frontend:
-#    container_name: 'frontend'
-#    build:
-#      context: ../frontend/
-#      dockerfile: Dockerfile
-#    ports:
-#      - 80:80
+  frontend:
+    container_name: 'frontend'
+    build:
+      context: ../frontend/
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
 
   payment:
     build:
