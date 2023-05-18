@@ -1,5 +1,6 @@
 package pl.edu.pg.trip.config;
 
+import org.springframework.amqp.core.AnonymousQueue;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +62,21 @@ public class ListeningQueuesConfiguration {
 
     @Bean
     public Queue getHotelDetailsQueue(@Value("${spring.rabbitmq.queue.hotel.get.single}") String queueName) {
+        return new Queue(queueName, true);
+    }
+
+    @Bean(name = "autoDeleteQueue")
+    Queue autoDeleteQueue() {
+        return new AnonymousQueue();
+    }
+
+    @Bean
+    public Queue getTripsQueue(@Value("${spring.rabbitmq.queue.trip.get.all}") final String queueName) {
+        return new Queue(queueName, true);
+    }
+
+    @Bean
+    public Queue getTripDetailsQueue(@Value("${spring.rabbitmq.queue.trip.get.details}") final String queueName) {
         return new Queue(queueName, true);
     }
 }
