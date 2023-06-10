@@ -27,3 +27,10 @@
   "reservationId": 4
 }
 ```
+
+**Confirm flight**
+```json
+{
+  "reservationId": 4
+}
+```

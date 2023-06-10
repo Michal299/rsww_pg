@@ -2,6 +2,7 @@ package pl.edu.pg.reservation.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,15 @@ public class ReservationCommandsListener {
     private final FlightRepository flightRepository;
     private final ReservationRepository reservationRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final Queue eventDataStore;
 
     @Autowired
-    public ReservationCommandsListener(FlightRepository flightRepository, ReservationRepository reservationRepository, RabbitTemplate rabbitTemplate) {
+    public ReservationCommandsListener(FlightRepository flightRepository, ReservationRepository reservationRepository,
+                                       RabbitTemplate rabbitTemplate, Queue eventDataStore) {
         this.flightRepository = flightRepository;
         this.reservationRepository = reservationRepository;
         this.rabbitTemplate = rabbitTemplate;
+        this.eventDataStore = eventDataStore;
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.reserveFlightQueue}")
@@ -36,10 +40,15 @@ public class ReservationCommandsListener {
         Optional<Flight> maybeFlight = flightRepository.findById(message.getFlightId());
         if (maybeFlight.isEmpty()) {
             logger.info("Cannot create a reservation for flight that does not exist. FlightId: {}", message.getFlightId());
-        } else { // what if there are no seats
-            Reservation reservation = ReserveFlightCommand.commandToEntityMapper(message, maybeFlight.get());
-            Reservation savedReservation = reservationRepository.save(reservation);
-            logger.info("Created reservation: {}", savedReservation);
+        } else {
+            Flight flight = maybeFlight.get();
+            if (flight.getPlacesOccupied() + message.getNumberOfPeople() > flight.getPlacesCount()) {
+                logger.info("Cannot create a reservation because there are not enough places. FlightId: {}", message.getFlightId());
+            } else {
+                Reservation reservation = ReserveFlightCommand.commandToEntityMapper(message, flight);
+                Reservation savedReservation = reservationRepository.save(reservation);
+                logger.info("Created reservation: {}", savedReservation);
+            }
         }
     }
 
@@ -56,6 +65,16 @@ public class ReservationCommandsListener {
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.confirmFlightReservationQueue}")
     public void confirmFlightReservationListener(ConfirmFlightReservationCommand message) {
-        // TODO
+        Optional<Reservation> maybeReservation = reservationRepository.findById(message.getReservationId());
+        if (maybeReservation.isEmpty()) {
+            logger.info("Cannot confirm a reservation that does not exist. ReservationId: {}", message.getReservationId());
+        } else {
+            Reservation reservation = maybeReservation.get();
+            Flight flight = reservation.getFlightId();
+            flight.reservePlaces(reservation.getNumberOfPeople());
+            Flight savedFlight = flightRepository.save(flight);
+            rabbitTemplate.convertAndSend(eventDataStore.getName(), savedFlight);
+            logger.info("Confirm reservation: {}", message.getReservationId());
+        }
     }
 }
