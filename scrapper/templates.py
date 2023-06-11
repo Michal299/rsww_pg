@@ -80,11 +80,11 @@ class FlightTemplate:
 
     def to_json(self):
         flight = {
-            "departure_airport": self.departure_airport,
-            "arrival_airport": self.arrival_airport,
-            "departure_date": self.departure_date,
-            "arrival_date": self.arrival_date,
-            "travel_time": self.travel_time,
+            "departureAirport": self.departure_airport,
+            "arrivalAirport": self.arrival_airport,
+            "departureDate": self.departure_date,
+            "arrivalDate": self.arrival_date,
+            "travelTime": self.travel_time,
             "placesCount": self.placesCount
         }
 
