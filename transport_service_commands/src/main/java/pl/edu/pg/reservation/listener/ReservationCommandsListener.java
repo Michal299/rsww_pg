@@ -12,6 +12,7 @@ import pl.edu.pg.reservation.command.ConfirmFlightReservationCommand;
 import pl.edu.pg.reservation.command.ReserveFlightCommand;
 import pl.edu.pg.reservation.entity.Reservation;
 import pl.edu.pg.reservation.repository.ReservationRepository;
+import pl.edu.pg.reservation.response.ReservationResponse;
 import pl.edu.pg.transport.entity.Flight;
 import pl.edu.pg.transport.repository.FlightRepository;
 
@@ -36,45 +37,73 @@ public class ReservationCommandsListener {
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.reserveFlightQueue}")
-    public void reserveFlightListener(ReserveFlightCommand message) {
+    public ReservationResponse reserveFlightListener(ReserveFlightCommand message) {
         Optional<Flight> maybeFlight = flightRepository.findById(message.getFlightId());
         if (maybeFlight.isEmpty()) {
-            logger.info("Cannot create a reservation for flight that does not exist. FlightId: {}", message.getFlightId());
-        } else {
-            Flight flight = maybeFlight.get();
-            if (flight.getPlacesOccupied() + message.getNumberOfPeople() > flight.getPlacesCount()) {
-                logger.info("Cannot create a reservation because there are not enough places. FlightId: {}", message.getFlightId());
-            } else {
-                Reservation reservation = ReserveFlightCommand.commandToEntityMapper(message, flight);
-                Reservation savedReservation = reservationRepository.save(reservation);
-                logger.info("Created reservation: {}", savedReservation);
-            }
+            return ReservationResponse
+                    .builder()
+                    .status(false)
+                    .message("Cannot create a reservation for flight that does not exist. FlightId: " + message.getFlightId())
+                    .build();
         }
+
+        Flight flight = maybeFlight.get();
+        if (flight.getPlacesOccupied() + message.getNumberOfPeople() > flight.getPlacesCount()) {
+            return ReservationResponse
+                    .builder()
+                    .status(false)
+                    .message("Cannot create a reservation because there are not enough places. FlightId: " + message.getFlightId())
+                    .build();
+        }
+
+        Reservation reservation = ReserveFlightCommand.commandToEntityMapper(message, flight);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        return ReservationResponse
+                .builder()
+                .status(true)
+                .message("Created reservation: " + savedReservation.getId())
+                .build();
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.cancelFlightReservationQueue}")
-    public void cancelFlightReservationListener(CancelFlightReservationCommand message) {
+    public ReservationResponse cancelFlightReservationListener(CancelFlightReservationCommand message) {
         Optional<Reservation> maybeReservation = reservationRepository.findById(message.getReservationId());
         if (maybeReservation.isEmpty()) {
-            logger.info("Cannot cancel a reservation that does not exist. ReservationId: {}", message.getReservationId());
-        } else {
-            reservationRepository.delete(maybeReservation.get());
-            logger.info("Canceled reservation: {}", message.getReservationId());
+            return ReservationResponse
+                    .builder()
+                    .status(false)
+                    .message("Cannot cancel a reservation that does not exist. ReservationId: " + message.getReservationId())
+                    .build();
         }
+
+        reservationRepository.delete(maybeReservation.get());
+        return ReservationResponse
+                .builder()
+                .status(true)
+                .message("Canceled reservation: " + message.getReservationId())
+                .build();
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.confirmFlightReservationQueue}")
-    public void confirmFlightReservationListener(ConfirmFlightReservationCommand message) {
+    public ReservationResponse confirmFlightReservationListener(ConfirmFlightReservationCommand message) {
         Optional<Reservation> maybeReservation = reservationRepository.findById(message.getReservationId());
         if (maybeReservation.isEmpty()) {
-            logger.info("Cannot confirm a reservation that does not exist. ReservationId: {}", message.getReservationId());
-        } else {
-            Reservation reservation = maybeReservation.get();
-            Flight flight = reservation.getFlightId();
-            flight.reservePlaces(reservation.getNumberOfPeople());
-            Flight savedFlight = flightRepository.save(flight);
-            rabbitTemplate.convertAndSend(confirmFlightReservationDataStore.getName(), savedFlight);
-            logger.info("Confirm reservation: {}", message.getReservationId());
+            return ReservationResponse
+                    .builder()
+                    .status(false)
+                    .message("Cannot confirm a reservation that does not exist. ReservationId: " + message.getReservationId())
+                    .build();
         }
+
+        Reservation reservation = maybeReservation.get();
+        Flight flight = reservation.getFlightId();
+        flight.reservePlaces(reservation.getNumberOfPeople());
+        Flight savedFlight = flightRepository.save(flight);
+        rabbitTemplate.convertAndSend(confirmFlightReservationDataStore.getName(), savedFlight);
+        return ReservationResponse
+                .builder()
+                .status(true)
+                .message("Confirmed reservation: " + message.getReservationId())
+                .build();
     }
 }
