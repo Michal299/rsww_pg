@@ -20,8 +20,13 @@ public class EventDataStoreListener {
         this.repository = repository;
     }
 
-    @RabbitListener(queues = "${spring.rabbitmq.queue.eventDataStore}")
-    public void receiveMessage(Message<Flight> message) {
+    @RabbitListener(queues = "${spring.rabbitmq.queue.addFlightDataStore}")
+    public void saveFlight(Message<Flight> message) {
         repository.save(message.getPayload()); // TODO: also send NotifyFlightAdded to trip_service
+    }
+
+    @RabbitListener(queues = "${spring.rabbitmq.queue.confirmFlightReservationDataStore}")
+    public void updateFlight(Message<Flight> message) {
+        repository.save(message.getPayload());
     }
 }

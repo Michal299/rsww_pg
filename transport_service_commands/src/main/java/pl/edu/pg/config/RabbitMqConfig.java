@@ -16,8 +16,11 @@ public class RabbitMqConfig {
     @Value("${spring.rabbitmq.queue.addFlightQueue}")
     private String addFlightQueue;
 
-    @Value("${spring.rabbitmq.queue.eventDataStore}")
-    private String eventDataStore;
+    @Value("${spring.rabbitmq.queue.addFlightDataStore}")
+    private String addFlightDataStore;
+
+    @Value("${spring.rabbitmq.queue.confirmFlightReservationDataStore}")
+    private String confirmFlightReservationDataStore;
 
     @Value("${spring.rabbitmq.queue.reserveFlightQueue}")
     private String reserveFlightQueue;
@@ -46,8 +49,13 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Queue eventDataStore() {
-        return new Queue(eventDataStore, true);
+    public Queue addFlightDataStore() {
+        return new Queue(addFlightDataStore, true);
+    }
+
+    @Bean
+    public Queue confirmFlightReservationDataStore() {
+        return new Queue(confirmFlightReservationDataStore, true);
     }
 
     @Bean
