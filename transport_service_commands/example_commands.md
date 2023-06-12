@@ -35,3 +35,11 @@
   "reservationId": 4
 }
 ```
+
+**Update flight price**
+```json
+{
+  "flightId": 1,
+  "price": 490
+}
+```

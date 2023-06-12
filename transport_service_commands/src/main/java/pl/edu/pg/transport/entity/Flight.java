@@ -53,4 +53,8 @@ public class Flight {
     public void reservePlaces(int places) {
         this.placesOccupied += places;
     }
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
 }
