@@ -10,24 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import pl.edu.pg.gateway.trip.dto.GetDeparturesRequest;
-import pl.edu.pg.gateway.trip.dto.GetDeparturesResponse;
-import pl.edu.pg.gateway.trip.dto.GetDestinationRequest;
-import pl.edu.pg.gateway.trip.dto.GetDestinationsResponse;
-import pl.edu.pg.gateway.trip.dto.NotificationResponse;
-import pl.edu.pg.gateway.trip.dto.TripDetailsRequest;
-import pl.edu.pg.gateway.trip.dto.TripDetailsResponse;
-import pl.edu.pg.gateway.trip.dto.TripsRequest;
-import pl.edu.pg.gateway.trip.dto.TripsResponse;
+import pl.edu.pg.gateway.trip.dto.*;
 import pl.edu.pg.gateway.trip.dto.reservation.PostReservationRequest;
 import pl.edu.pg.gateway.trip.dto.reservation.PostReservationResponse;
 import pl.edu.pg.gateway.trip.dto.reservation.TripReservationPayment;
 import pl.edu.pg.gateway.trip.dto.reservation.TripReservationPaymentResponse;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class TripService {
@@ -40,7 +31,9 @@ public class TripService {
     private final String reserveTripQueueName;
     private final String rollbackReservationTripQueueName;
     private final String paymentQueue;
-    private final String timeoutInSeconds;
+    private final int timeoutInSeconds;
+    private final List<Long> reservedIdTrips;
+    private final Map<Long, TripDetailsResponse> cacheForGetTrip;
 
     @Autowired
     TripService(final RabbitTemplate rabbitTemplate,
@@ -60,7 +53,9 @@ public class TripService {
         this.reserveTripQueueName = reserveTripQueueName;
         this.rollbackReservationTripQueueName = rollbackReservationTripQueueName;
         this.paymentQueue = paymentQueue;
-        this.timeoutInSeconds = timeoutInSeconds;
+        this.timeoutInSeconds = Integer.parseInt(timeoutInSeconds);
+        this.reservedIdTrips = new ArrayList<>();
+        this.cacheForGetTrip = new HashMap<>();
     }
 
     public Optional<TripsResponse> getTrips(final SearchParams searchParams) {
@@ -82,6 +77,9 @@ public class TripService {
                 new ParameterizedTypeReference<>() {
                 }
         );
+        if (response != null) {
+            cacheForGetTrip.put(id, response);
+        }
         return Optional.ofNullable(response);
     }
 
@@ -114,7 +112,11 @@ public class TripService {
                 new ParameterizedTypeReference<>() {
                 }
         );
-        return response.isReserved();
+        boolean reserved = response.isReserved();
+        if (reserved) {
+            reservedIdTrips.add(tripId);
+        }
+        return reserved;
     }
 
     public boolean rollbackReservation(final Long tripId, PostReservationRequest reservationRequest) {
@@ -149,11 +151,38 @@ public class TripService {
     }
 
     public List<NotificationResponse> getNotifications(Long tripId) {
-        return Arrays.asList(NotificationResponse.builder().notification("essa").build(), NotificationResponse.builder().notification("xd").build());
+        if (reservedIdTrips.contains(tripId)) {
+            new Thread(new DeletionAfterTimeout(reservedIdTrips, tripId, timeoutInSeconds * 1_000)).start();
+            return Collections.singletonList(NotificationResponse
+                    .builder()
+                    .notification("Właśnie ta wycieczka została zarezerwowana lub kupiona przez kogoś innego")
+                    .build()
+            );
+        }
+        return Collections.emptyList();
     }
 
     public List<NotificationResponse> getNotifications(String destination) {
-        return Arrays.asList(NotificationResponse.builder().notification("essa").build(), NotificationResponse.builder().notification("xd").build());
+        List<Long> reservedIdTripsToRemove = new ArrayList<>();
+        List<TripDetailsResponse> reservedTrips = new ArrayList<>();
+        for (Long key : cacheForGetTrip.keySet()) {
+            if (reservedIdTrips.contains(key)) {
+                reservedTrips.add(cacheForGetTrip.get(key));
+                reservedIdTripsToRemove.add(key);
+            }
+        }
+        if (!destination.equals("all")) {
+            reservedTrips = reservedTrips.stream().filter(reservedTrip -> reservedTrip.getHotel().getCountry().equals(destination)).collect(Collectors.toList());
+        }
+        String parsedDestination = destination.equals("all") ? "" : " do " + destination;
+        reservedIdTrips.removeAll(reservedIdTripsToRemove);
+        return reservedTrips
+                .stream()
+                .map(reservedTrip -> NotificationResponse
+                        .builder()
+                        .notification("Właśnie kupiono lub zarezerwowano wycieczkę" + parsedDestination + " w hotelu " + reservedTrip.getHotel().getName())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Data
