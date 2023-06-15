@@ -10,7 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import pl.edu.pg.gateway.trip.dto.*;
+import pl.edu.pg.gateway.trip.dto.GetDeparturesRequest;
+import pl.edu.pg.gateway.trip.dto.GetDeparturesResponse;
+import pl.edu.pg.gateway.trip.dto.GetDestinationRequest;
+import pl.edu.pg.gateway.trip.dto.GetDestinationsResponse;
+import pl.edu.pg.gateway.trip.dto.NotificationResponse;
+import pl.edu.pg.gateway.trip.dto.TripDetailsRequest;
+import pl.edu.pg.gateway.trip.dto.TripDetailsResponse;
+import pl.edu.pg.gateway.trip.dto.TripsRequest;
+import pl.edu.pg.gateway.trip.dto.TripsResponse;
 import pl.edu.pg.gateway.trip.dto.reservation.PostReservationRequest;
 import pl.edu.pg.gateway.trip.dto.reservation.PostReservationResponse;
 import pl.edu.pg.gateway.trip.dto.reservation.TripReservationPayment;
@@ -152,7 +160,7 @@ public class TripService {
 
     public List<NotificationResponse> getNotifications(Long tripId) {
         if (reservedIdTrips.contains(tripId)) {
-            new Thread(new DeletionAfterTimeout(reservedIdTrips, tripId, timeoutInSeconds * 1_000)).start();
+            new Thread(new DeletionAfterTimeout(reservedIdTrips, Collections.singletonList(tripId), timeoutInSeconds * 1_000)).start();
             return Collections.singletonList(NotificationResponse
                     .builder()
                     .notification("Właśnie ta wycieczka została zarezerwowana lub kupiona przez kogoś innego")
@@ -175,7 +183,7 @@ public class TripService {
             reservedTrips = reservedTrips.stream().filter(reservedTrip -> reservedTrip.getHotel().getCountry().equals(destination)).collect(Collectors.toList());
         }
         String parsedDestination = destination.equals("all") ? "" : " do " + destination;
-        reservedIdTrips.removeAll(reservedIdTripsToRemove);
+        new Thread(new DeletionAfterTimeout(reservedIdTrips, reservedIdTripsToRemove, timeoutInSeconds * 1_000)).start();
         return reservedTrips
                 .stream()
                 .map(reservedTrip -> NotificationResponse

@@ -4,12 +4,12 @@ import java.util.List;
 
 public class DeletionAfterTimeout implements Runnable {
     private final List<Long> list;
-    private final Long element;
+    private final List<Long> elements;
     private final int timeout;
 
-    public DeletionAfterTimeout(List<Long> list, Long element, int timeout) {
+    public DeletionAfterTimeout(List<Long> list, List<Long> elements, int timeout) {
         this.list = list;
-        this.element = element;
+        this.elements = elements;
         this.timeout = timeout;
     }
 
@@ -20,6 +20,6 @@ public class DeletionAfterTimeout implements Runnable {
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }
-        list.remove(element);
+        list.removeAll(elements);
     }
 }
