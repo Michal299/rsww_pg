@@ -1,16 +1,23 @@
 package pl.edu.pg.gateway.trip;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import org.springframework.amqp.support.converter.Jackson2JavaTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pg.gateway.trip.dto.TripDetailsResponse;
 import pl.edu.pg.gateway.trip.dto.TripsResponse;
+import pl.edu.pg.gateway.trip.dto.reservation.PostReservationRequest;
 
 import java.util.List;
 
@@ -68,4 +75,24 @@ public class TripController {
         return ResponseEntity.ok(tripService.getPossibleDepartures());
     }
 
+    @PostMapping
+    @RequestMapping("/{id}/reserve")
+    ResponseEntity reserveTrip(@PathVariable("id") Long tripId,
+                               @RequestBody String request) {
+        final var objectMapper = new ObjectMapper();
+        try {
+            PostReservationRequest postRequest = objectMapper.readValue(request, PostReservationRequest.class);
+            tripService.reserve(tripId, postRequest);
+            return ResponseEntity.accepted().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/{reservationId}/payment")
+    ResponseEntity payForReservation(@PathVariable("reservationId") Integer reservationId,
+                                     @RequestParam(value = "user", required = true) Long userId) {
+        final var result = tripService.payForTrip(reservationId, userId);
+        return result ? ResponseEntity.accepted().build() : new ResponseEntity(HttpStatusCode.valueOf(400));
+    }
 }
