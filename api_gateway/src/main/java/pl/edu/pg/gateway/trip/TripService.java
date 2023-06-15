@@ -10,7 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import pl.edu.pg.gateway.trip.dto.*;
+import pl.edu.pg.gateway.trip.dto.GetDeparturesRequest;
+import pl.edu.pg.gateway.trip.dto.GetDeparturesResponse;
+import pl.edu.pg.gateway.trip.dto.GetDestinationRequest;
+import pl.edu.pg.gateway.trip.dto.GetDestinationsResponse;
+import pl.edu.pg.gateway.trip.dto.NotificationResponse;
+import pl.edu.pg.gateway.trip.dto.TripDetailsRequest;
+import pl.edu.pg.gateway.trip.dto.TripDetailsResponse;
+import pl.edu.pg.gateway.trip.dto.TripsRequest;
+import pl.edu.pg.gateway.trip.dto.TripsResponse;
 import pl.edu.pg.gateway.trip.dto.reservation.PostReservationRequest;
 import pl.edu.pg.gateway.trip.dto.reservation.PostReservationResponse;
 import pl.edu.pg.gateway.trip.dto.reservation.TripReservationPayment;
@@ -141,12 +149,10 @@ public class TripService {
     }
 
     public List<NotificationResponse> getNotifications(Long tripId) {
-        System.out.println("getNotifications: " + tripId);
         return Arrays.asList(NotificationResponse.builder().notification("essa").build(), NotificationResponse.builder().notification("xd").build());
     }
 
     public List<NotificationResponse> getNotifications(String destination) {
-        System.out.println("getNotifications: " + destination);
         return Arrays.asList(NotificationResponse.builder().notification("essa").build(), NotificationResponse.builder().notification("xd").build());
     }
 
