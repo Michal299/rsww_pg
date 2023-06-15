@@ -75,21 +75,13 @@ const MyReservationsListElement = ({reservation}) => {
                         <Card.Title className="border-bottom">
                             <h5 className="text-success">
                                 <FontAwesomeIcon icon={faLocationDot} className="me-1 fa-fw"/>
-<<<<<<< HEAD
-                                {reservation.hotel.country} | {reservation.hotel.city}
-=======
                                 {reservation.hotel.place}
->>>>>>> 3abd803f5954207c49169a8000ed72cc6c237c41
                             </h5>
                         </Card.Title>
                         <ListGroup className="list-group-flush">
                             <ListGroup.Item className="px-1">
                                 <FontAwesomeIcon icon={faCalendar} className="me-1 fa-fw" />
-<<<<<<< HEAD
-                                {reservation.transport.departureDateTime}
-=======
                                 {reservation.dateStart} - {reservation.dateEnd}
->>>>>>> 3abd803f5954207c49169a8000ed72cc6c237c41
                             </ListGroup.Item>
                             <ListGroup.Item className="px-1">
                                 <FontAwesomeIcon icon={faHotel} className="me-1 fa-fw" />
